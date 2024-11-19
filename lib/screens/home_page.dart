@@ -345,7 +345,7 @@ Widget _buildCarouselSlide({
   );
 }
 
-
+//kk
 
   Widget _buildCarouselArrow({required IconData icon, required VoidCallback onPressed, required Alignment alignment}) {
     return Align(
