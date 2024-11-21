@@ -25,16 +25,14 @@ class _LoginPageState extends State<login> {
 
   Future<void> _loadToken() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token'); 
+    token = prefs.getString('auth_token'); 
 
     if (token != null) {
       try {
-        final jwt = JWT.verify(token, SecretKey('123456#'));
+        final jwt = JWT.verify(token!, SecretKey('123456#'));
         userId = jwt.payload['_id'];
         print('User ID: $userId'); 
-        setState(() {
-          isLogin = true;
-        });
+        isLogin = true;
       } catch (e) {
         print('Error decoding token: $e');
       }
@@ -42,6 +40,38 @@ class _LoginPageState extends State<login> {
       print('No token found');
     }
   }
+
+  Future<void> fetchCartCount(String userId) async {
+  try {
+    final response = await http.get(
+      Uri.parse('https://dukan-baladna.onrender.com/cart/$userId'),
+      headers: {
+        'Authorization': 'brear_$token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+        int totalQuantity = 0;
+
+      // Loop through cart and products to sum quantities
+      for (var cartItem in responseData['cart']) {
+        for (var product in cartItem['products']) {
+          totalQuantity += (product['quantity'] as int); // Cast quantity to int
+        }
+      }
+
+      // Update the cart count in the app state
+      setState(() {
+        cartCount = totalQuantity; // Update the global cart count
+      });
+    }
+  } catch (e) {
+ // Handle error
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('An error occurred. Please try again!')),
+    );  }
+}
 
   Future<void> _login() async {
     setState(() {
@@ -66,22 +96,25 @@ class _LoginPageState extends State<login> {
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      token= responseData['token'];
-      
+      token=await responseData['token'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('auth_token', token);
+      prefs.setString('auth_token', token!);
 
       // Load token after successful login
       _loadToken();
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ),
-      );
+      fetchCartCount(userId);
+                if(flagLog == true) {
+                     Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => HomePage()),
+                      );
+                }
+                else {
+                     Navigator.pop(context);
+                }
+              
     } else {
-      final responseData = jsonDecode(response.body);
+      final responseData = await jsonDecode(response.body);
       final errorMessage = responseData['message'] ?? 'Login failed.';
       
       setState(() {
@@ -109,15 +142,20 @@ class _LoginPageState extends State<login> {
             IconButton(
               icon: Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
-                 Navigator.push(
+                if(flagLog == true) {
+                     Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => loginAndsignup()),
                       );
+                }
+                else {
+                     Navigator.pop(context);
+                }
               },
             ),
             SizedBox(height: 20),
             Text(
-              'Hi !\nWelcome Back,',
+              'Hi !\nWelcome ,',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 30,

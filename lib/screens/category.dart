@@ -152,7 +152,27 @@ class CategoryPage extends StatelessWidget {
                             } else if (snapshot.hasError) {
                               return Center(child: Text('Error: ${snapshot.error}'));
                             } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-                              return Center(child: Text('No categories found.'));
+                              return Center(
+                                child: Transform(
+                                  alignment: Alignment.center,
+                                  transform: Matrix4.rotationZ(3.14159),  // Rotate the text by 180 degrees
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'No categories found.',
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      SizedBox(height: 10), // Add some spacing between the two texts
+                                      Text(
+                                        'لا توجد فئات',
+                                        style: TextStyle(fontSize: 16),
+                                        textAlign: TextAlign.center, // Center the Arabic text
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
                             } else {
                               return GridView.builder(
                                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -170,10 +190,9 @@ class CategoryPage extends StatelessWidget {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => SubCategoryPage(
-                                            
-                                            category['_id'] ?? '673a5c0529b5456d90cfe347',
-                                            
+                                         builder: (context) => SubCategoryPage(
+                                            categoryId: category['_id'] ?? '673a5c0529b5456d90cfe347',
+                                            name: category['name'] ?? '',
                                           ),
                                         ),
                                       );

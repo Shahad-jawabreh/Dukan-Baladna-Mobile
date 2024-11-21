@@ -1,3 +1,4 @@
+import 'package:dukan_baladna/screens/globle.dart';
 import 'package:dukan_baladna/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'login.dart'; // Import login.dart
@@ -54,6 +55,7 @@ class loginAndsignup extends StatelessWidget {
                   SizedBox(height: 80),
                   ElevatedButton(
                     onPressed: () {
+                      flagLog = true;
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => login()),
@@ -121,11 +123,12 @@ class loginAndsignup extends StatelessWidget {
                 color: Colors.white,
                 size: 28,
               ),
-              onPressed: () {
+                 onPressed: () {
                  Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => HomePage()),
                       );
+                
               },
             ),
           ),
