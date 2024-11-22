@@ -52,6 +52,9 @@ Future<void> fetchCart() async {
           cartProducts = cartList.isNotEmpty
               ? cartList[0]['products'] ?? [] // Get products from the first cart object
               : [];
+              setState(() {
+                cartCount = cartProducts.length;
+              });
         });
       } else {
         debugPrint("Unexpected cart format: ${jsonEncode(data)}");
@@ -122,8 +125,15 @@ Future<void> fetchCart() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Cart'),
-      ),
+  title: const Text('My Cart'),
+  leading: IconButton(
+    icon: Icon(Icons.arrow_back),
+    onPressed: () {
+      Navigator.pop(context); // This will pop the current page from the navigation stack
+    },
+  ),
+),
+
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : cartProducts.isEmpty

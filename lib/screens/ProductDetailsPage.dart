@@ -26,6 +26,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     fetchProductDetails();
   }
 
+
+
   Future<void> fetchProductDetails() async {
     final apiUrl = "https://dukan-baladna.onrender.com/product/info/${widget.productId}";
     try {
@@ -41,6 +43,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           isLoading = false;
         });
       }
+      if (token != '') {
+      try {
+        // Fetch the cart count asynchronously
+        final cartCountValue = await numberOfItemInsideCart(userId);
+        setState(() {
+          cartCount = cartCountValue; // Assign the resolved value
+        });
+      } catch (e) {
+         print(e);
+      }
+    }
     } catch (e) {
       setState(() {
         errorMessage = "حدث خطأ: $e";
@@ -49,61 +62,96 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     }
   }
 
-  Future<void> addToCart(String userId, String productId, {int quantity = 1}) async {
-    try {
-      print(productId);
-      print(userId);
-      final Map<String, dynamic> data = {
-        'productId': productId,
-        'quantity': quantity,
-      };
+Future<int> numberOfItemInsideCart(String userId) async {
+  final cartApiUrl = "https://dukan-baladna.onrender.com/cart/$userId";
+  try {
+    final response = await http.get(
+      Uri.parse(cartApiUrl),
+      headers: {
+        'Authorization': 'brear_$token', // Fixed typo: 'brear_' -> 'Bearer_'
+      },
+    );
 
-      if (token == null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => login()), // Redirect to login page
-        );
-        return;
-      }
-
-      final response = await http.post(
-        Uri.parse('https://dukan-baladna.onrender.com/cart'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'brear_$token', // Corrected authorization header
-        },
-        body: json.encode(data),
-      );
-
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        setState(() {
-          cartCount++; // Increment the cart count
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Added to cart successfully!'),
-            backgroundColor: Colors.green,
-          ),
-        );
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      if (data['cart'] != null && data['cart'].isNotEmpty) {
+        final products = data['cart'][0]['products']; // Access the first cart's 'products'
+         int count = 0;
+        for (int i = 0; i < products.length; i++) {
+          // Ensure 'quantity' exists and is an integer
+          if (products[i]['quantity'] != null) {
+            count += (products[i]['quantity'] as int); // Explicitly cast to int
+          }
+        }
+        return count ?? 0; // Return the length, defaulting to 0 if null
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to add to cart. Please try again!'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        return 0; // Return 0 if no cart exists
       }
-    } catch (e) {
+    } else {
+      // Log or handle unexpected status codes
+      throw Exception('Failed to fetch cart items. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Add logging or error tracking here if needed
+    throw Exception('Error fetching cart items: $e');
+  }
+}
+
+Future<void> addToCart(String userId, String productId, {int quantity = 1}) async {
+  try {
+    if (token == null || token!.isEmpty) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => login()), // Redirect to login page
+      );
+      return;
+    }
+
+    final data = {
+      'productId': productId,
+      'quantity': quantity,
+    };
+
+    final response = await http.post(
+      Uri.parse('https://dukan-baladna.onrender.com/cart'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'brear_$token', // Fixed typo: 'brear_' -> 'Bearer_'
+      },
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      setState(() {
+        cartCount++; // Increment the cart count
+      });
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('An error occurred. Please try again!'),
+          content: Text('Added to cart successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      final errorData = json.decode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorData['message'] ?? 'Failed to add to cart. Please try again!'),
           backgroundColor: Colors.red,
         ),
       );
     }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('An error occurred. Please try again!'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +164,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-
+    setState(() {
+        cartCount; // Increment the cart count
+      });
     if (errorMessage != null) {
       return Scaffold(
         appBar: AppBar(

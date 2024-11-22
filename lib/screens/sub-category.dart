@@ -154,7 +154,7 @@ class _SubCategoryPageState extends State<SubCategoryPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ProductDetailsPage(
-                                  productId: subCategory['_id'],
+                                    productId: subCategory['_id'],
                                 ),
                               ),
                             );
