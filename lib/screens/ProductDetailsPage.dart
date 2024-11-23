@@ -154,161 +154,220 @@ Future<void> addToCart(String userId, String productId, {int quantity = 1}) asyn
 
 
   @override
-  Widget build(BuildContext context) {
-    if (isLoading) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('جاري التحميل...'),
-          backgroundColor: Color(0xFF94A96B),
-        ),
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-    setState(() {
-        cartCount; // Increment the cart count
-      });
-    if (errorMessage != null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('خطأ'),
-          backgroundColor: Colors.teal,
-        ),
-        body: Center(
-          child: Text(
-            errorMessage!,
-            style: TextStyle(color: Colors.red, fontSize: 18.0),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
-    }
-
+Widget build(BuildContext context) {
+  if (isLoading) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(productDetails!['name']),
+        title: Text('جاري التحميل...'),
         backgroundColor: Color(0xFF94A96B),
-        elevation: 0,
-        actions: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              IconButton(
-                icon: Icon(Icons.shopping_cart),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => CartPage()), // Navigate to the cart page
-                  );
-                },
-              ),
-              if (cartCount > 0)
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: CircleAvatar(
-                    radius: 10,
-                    backgroundColor: Colors.red,
-                    child: Text(
-                      '$cartCount',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: Image.network(
-                  productDetails!['mainImage']['secure_url'],
-                  height: 250.0,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Text(
-                productDetails!['name'],
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontSize: 26.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.teal[800],
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                "السعر: ${productDetails!['price']} ₪",
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.teal[600],
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Text(
-                "الوصف:",
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF94A96B),
-                ),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                productDetails!['description'] ?? "لا يوجد وصف متوفر",
-                textAlign: TextAlign.right,
-                style: TextStyle(fontSize: 16.0, color: Colors.grey[800]),
-              ),
-              SizedBox(height: 24.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: Icon(Icons.favorite_border),
-                      label: Text("إضافة إلى الأمنيات"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF94A96B),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 12.0),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 16.0),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        addToCart(userId, productDetails!['_id']);
-                      },
-                      icon: Icon(Icons.shopping_cart),
-                      label: Text("إضافة إلى السلة"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFF6FB7A),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 12.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+      body: Center(child: CircularProgressIndicator()),
+    );
+  }
+  setState(() {
+    cartCount; // Increment the cart count
+  });
+  if (errorMessage != null) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('خطأ'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Center(
+        child: Text(
+          errorMessage!,
+          style: TextStyle(color: Colors.red, fontSize: 18.0),
+          textAlign: TextAlign.center,
         ),
       ),
     );
   }
+
+  // Default main image
+  String mainImage = productDetails!['mainImage']['secure_url'];
+
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(productDetails!['name']),
+      backgroundColor: Color(0xFF94A96B),
+      elevation: 0,
+      actions: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CartPage()), // Navigate to the cart page
+                );
+              },
+            ),
+            if (cartCount > 0)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: CircleAvatar(
+                  radius: 10,
+                  backgroundColor: Colors.red,
+                  child: Text(
+                    '$cartCount',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    ),
+    body: SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // الصورة الرئيسية
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(
+                mainImage,
+                height: 250.0,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+            SizedBox(height: 16.0),
+
+            // الصور المصغرة
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // إضافة الصورة الرئيسية كصورة مصغرة
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      mainImage = productDetails!['mainImage']['secure_url'];
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.network(
+                        productDetails!['mainImage']['secure_url'],
+                        height: 100.0,
+                        width: 100.0,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                // الصور الفرعية
+                ...((productDetails!['subImage'] as List).map((subImage) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        mainImage = subImage['secure_url'];
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network(
+                          subImage['secure_url'],
+                          height: 100.0,
+                          width: 100.0,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList()),
+        ],
+      ),
+
+            SizedBox(height: 16.0),
+
+            // Product name and details
+            Text(
+              productDetails!['name'],
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 26.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.teal[800],
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              "السعر: ${productDetails!['price']} ₪",
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+                color: Colors.teal[600],
+              ),
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              "الوصف:",
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF94A96B),
+              ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              productDetails!['description'] ?? "لا يوجد وصف متوفر",
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: 16.0, color: Colors.grey[800]),
+            ),
+            SizedBox(height: 24.0),
+
+            // Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: Icon(Icons.favorite_border),
+                    label: Text("إضافة إلى الأمنيات"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF94A96B),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12.0),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 16.0),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      addToCart(userId, productDetails!['_id']);
+                    },
+                    icon: Icon(Icons.shopping_cart),
+                    label: Text("إضافة إلى السلة"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFF6FB7A),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 12.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 }
