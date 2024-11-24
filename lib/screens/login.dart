@@ -1,4 +1,5 @@
 import 'dart:convert'; 
+import 'package:dukan_baladna/AbminScreen/AdminDashboard.dart';
 import 'package:dukan_baladna/screens/loginAndsiginup.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -99,15 +100,31 @@ class _LoginPageState extends State<login> {
       token=await responseData['token'];
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('auth_token', token!);
+       
 
       // Load token after successful login
       _loadToken();
       fetchCartCount(userId);
                 if(flagLog == true) {
-                     Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                      );
+                          if(_usernameController.text=="shahadjawabreh3@gmail.com"){
+       
+        Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AdminDashboard(),
+        ),
+      );
+      }
+      else{
+      
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ),
+      );
+      }
                 }
                 else {
                      Navigator.pop(context);
