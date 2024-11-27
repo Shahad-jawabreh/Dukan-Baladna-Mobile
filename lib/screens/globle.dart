@@ -1,4 +1,4 @@
-  String userProfileImage = '';
+  String userProfileImage = 'assets/defualtuser.jpg';
   String userName = '';
   String userEmail = '';
    bool isLogin = false ;

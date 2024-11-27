@@ -125,9 +125,9 @@ class _HomePageState extends State<HomePage> {
         },
         child: isLogin
             ? CircleAvatar(
-                backgroundImage: userProfileImage.isNotEmpty
+                backgroundImage: userProfileImage != 'assets/defualtuser.jpg'
                     ? NetworkImage(userProfileImage)
-                    : const AssetImage('assets/default_profile.png') as ImageProvider,
+                    : const AssetImage('assets/defualtuser.jpg') as ImageProvider,
                 radius: 20,
               )
             : const Icon(Icons.login, color: Colors.white),

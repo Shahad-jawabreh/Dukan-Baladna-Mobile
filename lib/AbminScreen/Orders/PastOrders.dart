@@ -1,3 +1,4 @@
+import 'package:dukan_baladna/AbminScreen/AdminDashboard.dart';
 import 'package:dukan_baladna/screens/globle.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // For JSON decoding
@@ -78,8 +79,17 @@ class _PastOrdersState extends State<PastOrders> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Past Orders"),
+        title: const Text("past Orders"),
         backgroundColor: const Color(0xFF94A96B),
+          leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // أيقونة السهم
+          onPressed: () {
+            Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminDashboard()),
+                );
+          },
+        ),
         centerTitle: true,
       ),
       body: Column(

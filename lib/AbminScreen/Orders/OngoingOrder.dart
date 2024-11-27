@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dukan_baladna/AbminScreen/AdminDashboard.dart';
 import 'package:http/http.dart' as http;
 import 'package:dukan_baladna/screens/globle.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +78,15 @@ class _OngoingOrdersState extends State<OngoingOrders> {
       appBar: AppBar(
         title: const Text("Ongoing Orders"),
         backgroundColor: const Color(0xFF94A96B),
+          leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // أيقونة السهم
+          onPressed: () {
+            Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminDashboard()),
+                );
+          },
+        ),
         centerTitle: true,
       ),
       body: Column(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dukan_baladna/AbminScreen/AdminDashboard.dart';
 import 'package:intl/intl.dart';
 import 'package:dukan_baladna/screens/globle.dart';
 import 'package:flutter/material.dart';
@@ -78,10 +79,19 @@ Future<void> fetchPendingOrders() async {
 Widget build(BuildContext context) {
   return Scaffold(
     appBar: AppBar(
-      title: const Text("New Orders"),
-      backgroundColor: const Color(0xFF94A96B),
-      centerTitle: true,
-    ),
+        title: const Text("New Orders"),
+        backgroundColor: const Color(0xFF94A96B),
+          leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // أيقونة السهم
+          onPressed: () {
+            Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminDashboard()),
+                );
+          },
+        ),
+        centerTitle: true,
+      ),
     body: Column(
       children: [
         Container(
@@ -269,7 +279,7 @@ return Card(
     child: Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 222, 224, 241),
+        color: const Color.fromARGB(255, 219, 219, 223),
         borderRadius: BorderRadius.circular(12.0),
       ),
       child: Column(
